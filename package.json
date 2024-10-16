@@ -4,9 +4,9 @@
   "description": "Create Express routers using express.Router",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "seed": "node seed.js",
-    "test": "jest --watch",
+    "test": "jest --watchAll",
     "dev-start": "nodemon server.js"
   },
   "repository": {
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "jest": "^29.5.0",
-    "nodemon": "^2.0.15",
-    "supertest": "^6.3.3"
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.4"
   }
 }
