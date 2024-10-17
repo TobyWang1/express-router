@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('./src/app');
 const db = require('./db/connection');
 const User = require('./models/User');
+const Fruit = require('./models/Fruit');
 
 beforeAll(async () => {
     await db.sync();
@@ -9,6 +10,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
     await User.destroy({ where: {} });
+    await Fruit.destroy({ where: {} });
 });
 
 afterAll(async () => {
@@ -44,6 +46,15 @@ describe('POST /users/add', () => {
         expect(response.status).toBe(201);
         expect(response.body.age).toEqual(30);
     });
+
+    test('should return an error if name is missing', async () => {
+        const user = { age: 30 };
+        const response = await request(app)
+            .post('/users/add')
+            .send(user);
+        expect(response.status).toBe(400);
+        expect(response.body.errors[0].msg).toEqual('Name is required');
+    });
 });
 
 describe('PUT /users/update/:id', () => {
@@ -68,3 +79,24 @@ describe('DELETE /users/delete/:id', () => {
     });
 });
 
+describe('POST /fruits/add', () => {
+    test('should create a new fruit', async () => {
+        const fruit = { name: 'Grapefruit', color: 'Red' };
+        const response = await request(app)
+            .post('/fruits/add')
+            .send(fruit);
+        expect(response.status).toBe(201);
+        expect(response.body.color).toEqual('Red');
+    });
+
+    test('should return an error if name is missing', async () => {
+        const fruit = { name: '', color: 'Red' };
+        const response = await request(app)
+            .post('/fruits/add')
+            .send(fruit);
+        expect(response.status).toBe(400);
+        expect(response.body.errors).toBeDefined();
+        const errorMessages = response.body.errors.map(err => err.msg);
+        expect(errorMessages).toContain('Name is required');
+    });
+});
